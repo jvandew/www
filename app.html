@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MapGraph</title>
+</head>
+<body>
+<style type="text/css">
+div.olControlAttribution, div.olControlScaleLine {
+font-family: Verdana;
+font-size: 10px;
+bottom: 3px;
+}
+</style>
+<div id="map" style="height:540px; width:960px"></div>
+<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script src = "app.js"></script>
+<script type="text/javascript">
+    function getZoom(feat) {
+        var max = map.getNumZoomLevels();
+        var zoom = map.getZoom();
+        return Math.round((zoom * zoom * zoom)/(max * max * max));
+    }
+    var map = new OpenLayers.Map("map");
+    map.projection = new OpenLayers.Projection("EPSG:3857");
+    var style = new OpenLayers.Style({"strokeColor": "${color}", "fillColor": "${color}", "strokeWidth": 2, "pointRadius": "${zoom}"}, {"context": {"zoom": function(feat) {return map.getZoom();}}});
+    style = OpenLayers.Util.applyDefaults(style, OpenLayers.Feature.Vector.style["default"]);
+    var styleMap = new OpenLayers.StyleMap({"default": style});
+    var vectors = new OpenLayers.Layer.Vector("vectors", {"styleMap": styleMap});
+    var lastCheckin = null;
+
+    var limit = 10000;
+    var url = "https://api.foursquare.com/v2/users/self/checkins";
+    var token = window.location.href.split('=')[1];
+    if (token == undefined)
+        document.write("Log in to <a href='https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://www.contrib.andrew.cmu.edu/~jvandew/app.html'>foursquare</a> for crazy map funtimes.");
+    else
+        $.getJSON(url + "?oauth_token=" + token+"&limit=" + limit, jsonHandler);
+
+    var layer = new OpenLayers.Layer.OSM();
+    map.addLayer(layer);
+    map.addLayer(vectors);
+    if (lastCheckin == null)
+        lastCheckin = new OpenLayers.LonLat(-79.94297997867707, 40.4455930477455)
+                      .transform(new OpenLayers.Projection("EPSG:4326"),
+                                 map.projection);
+    map.setCenter(lastCheckin, 6);
+</script>
+</body>
+</html>
