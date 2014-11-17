@@ -3,9 +3,9 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler
 
-class MainHandler(RequestHandler):
+class HomeHandler(RequestHandler):
   def get(self):
-    self.write('hi there!')
+    self.render('index.html')
 
 def main():
 
@@ -17,7 +17,7 @@ def main():
   opts = options.options
 
   handlers = [
-    (r'/', MainHandler),
+    (r'/', HomeHandler),
   ]
 
   app = Application(
