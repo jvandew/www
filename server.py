@@ -7,6 +7,10 @@ class HomeHandler(RequestHandler):
   def get(self):
     self.render('index.html')
 
+class MainHandler(RequestHandler):
+  def get(self, template):
+    self.render(template)
+
 def main():
 
   options.define('port', default=8888, help='listen port', type=int)
@@ -18,6 +22,7 @@ def main():
 
   handlers = [
     (r'/', HomeHandler),
+    (r'/(?P<template>.*)', MainHandler),
   ]
 
   app = Application(
