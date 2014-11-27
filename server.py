@@ -1,15 +1,31 @@
+from os import path
+
 from tornado import options
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler
 
+
+class CardHandler(RequestHandler):
+  @property
+  def home(self):
+    # return dir(__file__)
+    return '/Users/jacob/projects/www'
+
+  def get(self, resource):
+    f = open(path.join(path.join(self.home, 'card'), resource), 'r')
+    self.write(f.read())
+
+
 class HomeHandler(RequestHandler):
   def get(self):
     self.render('index.html')
 
+
 class MainHandler(RequestHandler):
   def get(self, template):
     self.render(template)
+
 
 def main():
 
@@ -22,6 +38,7 @@ def main():
 
   handlers = [
     (r'/', HomeHandler),
+    (r'/card/(?P<resource>.*)', CardHandler),
     (r'/(?P<template>.*)', MainHandler),
   ]
 
