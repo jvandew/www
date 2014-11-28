@@ -1,3 +1,4 @@
+import logging
 from os import path
 
 from tornado import options
@@ -9,8 +10,7 @@ from tornado.web import Application, RequestHandler
 class CardHandler(RequestHandler):
   @property
   def home(self):
-    # return dir(__file__)
-    return '/Users/jacob/projects/www'
+    return path.dirname(__file__)
 
   def get(self, resource):
     f = open(path.join(path.join(self.home, 'card'), resource), 'r')
