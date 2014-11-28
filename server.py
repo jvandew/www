@@ -1,4 +1,3 @@
-import logging
 from os import path
 
 from tornado import options
@@ -7,19 +6,11 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler
 
 
-class CardHandler(RequestHandler):
-  @property
-  def home(self):
-    return path.dirname(__file__)
+DIR_NAME = path.dirname(__file__)
 
-  def get(self, resource):
-    f = open(path.join(path.join(self.home, 'card'), resource), 'r')
-    self.write(f.read())
-
-
-class HomeHandler(RequestHandler):
-  def get(self):
-    self.render('index.html')
+class IndexHandler(RequestHandler):
+  def get(self, directory):
+    self.render(path.join(directory, 'index.html'))
 
 
 class MainHandler(RequestHandler):
@@ -37,9 +28,8 @@ def main():
   opts = options.options
 
   handlers = [
-    (r'/', HomeHandler),
-    (r'/card/(?P<resource>.*)', CardHandler),
-    (r'/(?P<template>.*)', MainHandler),
+    (r'/(?P<directory>.*)/?', IndexHandler),
+    (r'/(?P<template>.*\.html)', MainHandler),
   ]
 
   app = Application(

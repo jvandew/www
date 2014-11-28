@@ -5,15 +5,15 @@ function preload(arrayOfImages) {
 }
 
 preload([
-  'images/shadow.png',
-  'images/mount-center.png',
-  'images/houses.png',
-  'images/windows-light.png',
-  'images/windows-dark.png',
-  'images/rink.png',
-  'images/rink-front.png',
-  'images/tree.png',
-  'images/general-light.png',
+  'static/card/images/shadow.png',
+  'static/card/images/mount-center.png',
+  'static/card/images/houses.png',
+  'static/card/images/windows-light.png',
+  'static/card/images/windows-dark.png',
+  'static/card/images/rink.png',
+  'static/card/images/rink-front.png',
+  'static/card/images/tree.png',
+  'static/card/images/general-light.png',
 ]);
 
 $(window).load(function() {
@@ -42,3 +42,4 @@ $(window).load(function() {
   });
 
 });
+
