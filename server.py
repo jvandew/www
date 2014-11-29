@@ -29,7 +29,7 @@ def main():
   options.define('port', default=8888, help='listen port', type=int)
   options.define('static_path', default='static', help='static assert directory')
   options.define('template_path', default='templates', help='template directory')
-  options.define('debug', default=True, help='start in debug mode', type=bool)
+  options.define('debug', default=False, help='start in debug mode', type=bool)
   options.parse_command_line()
   opts = options.options
 
