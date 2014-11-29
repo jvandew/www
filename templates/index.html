@@ -7,15 +7,17 @@
 {% end %}
 
 {% block contents %}
-  <img src="static/me.jpg" alt="This is me" width=288 height=192 /><br/><br/>
-  Hi!<br/>
-  My name is Jacob Van De Weert. I work at <a href="https://foursquare.com/about">foursquare</a>. This is my humble and neglected website. It&#39;s currently more of a sandbox for me to play around in.<br/><br/>
+  <div class="container">
+    <p style="text-align:center">
+      <img src="static/me.jpg" alt="This is me" width=288 height=192 />
+      <p class="lead" style="text-align:center">Hello there!</p>
+      My name is Jacob Van De Weert. This is my humble website. It&#39;s really more of a personal sandbox for my own pet projects.<br/><br/>
+    </p>
 
-  <a href="static/resume.pdf">Here is my resume</a><br/><br/>
+    Want a simple example? Log in to <a href="https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://jacobvdw.com/app.html">foursquare</a> for crazy map funtimes.
 
-  Log in to <a href="https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://jacobvdw.com/app.html">foursquare</a> for crazy map funtimes.
-
-  <div id="map" style="height:270px; width:480px"></div>
+    <div id="map" style="height:270px; width:480px"></div>
+  </div>
 {% end %}
 
 {% block extra_js %}
