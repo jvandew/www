@@ -1,32 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
 
-    <title>Jacob Van De Weert</title>
+{% block title %}Jacob Van De Weert{% end %}
 
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="static/css/map.css" rel="stylesheet">
-  </head>
+{% block extra_css %}
+  <link href="static/css/map.css" rel="stylesheet">
+{% end %}
 
-  <body>
-    <img src="static/me.jpg" alt="This is me" width=288 height=192 /><br/><br/>
-     Hi!<br/>
-     My name is Jacob Van De Weert. I work at <a href="https://foursquare.com/about">foursquare</a>. This is my humble and neglected website. It&#39;s currently more of a sandbox for me to play around in.<br/><br/>
+{% block contents %}
+  <img src="static/me.jpg" alt="This is me" width=288 height=192 /><br/><br/>
+  Hi!<br/>
+  My name is Jacob Van De Weert. I work at <a href="https://foursquare.com/about">foursquare</a>. This is my humble and neglected website. It&#39;s currently more of a sandbox for me to play around in.<br/><br/>
 
-     <a href="static/resume.pdf">Here is my resume</a><br/><br/>
+  <a href="static/resume.pdf">Here is my resume</a><br/><br/>
 
-     Log in to <a href="https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://jacobvdw.com/app.html">foursquare</a> for crazy map funtimes.
+  Log in to <a href="https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://jacobvdw.com/app.html">foursquare</a> for crazy map funtimes.
 
-    <div id="map" style="height:270px; width:480px"></div>
+  <div id="map" style="height:270px; width:480px"></div>
+{% end %}
 
-    <script src="static/js/jquery-2.1.1.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
-    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
-    <script src="static/map.js"></script>
-  </body>
-
-</html>
+{% block extra_js %}
+  <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+  <script src="static/map.js"></script>
+{% end %}
 
