@@ -10,12 +10,18 @@ DIR_NAME = path.dirname(__file__)
 
 class IndexHandler(RequestHandler):
   def get(self, directory):
-    self.render(path.join(directory, 'index.html'))
+    try:
+      self.render(path.join(directory, 'index.html'))
+    except IOError:
+      self.send_error(404)
 
 
 class MainHandler(RequestHandler):
   def get(self, template):
-    self.render(template)
+    try:
+      self.render(template)
+    except IOError:
+      self.send_error(404)
 
 
 def main():
