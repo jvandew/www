@@ -152,7 +152,7 @@ var version = year + month + day;
 var token = window.location.href.split('=')[1];
 
 if (token == undefined) {
-  document.write("Log in to <a href='https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://www.contrib.andrew.cmu.edu/~jvandew/app.html'>foursquare</a> for crazy map funtimes.");
+  document.write("Log in to <a href='https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://jacobvdw.com/app'>foursquare</a> for crazy map funtimes.");
 } else {
   $.getJSON(url + "?oauth_token="+token + "&limit="+limit + "&v="+version, jsonHandler);
 }

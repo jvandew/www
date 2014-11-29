@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Jacob Van De Weert{% end %}
 
@@ -6,7 +6,7 @@
   <link href="static/css/map.css" rel="stylesheet">
 {% end %}
 
-{% block contents %}
+{% block content %}
   <div class="container">
     <p style="text-align:center">
       <img src="static/me.jpg" alt="This is me" width=288 height=192 />
@@ -14,7 +14,7 @@
       My name is Jacob Van De Weert. This is my humble website. It&#39;s really more of a personal sandbox for my own pet projects.<br/><br/>
     </p>
 
-    Want a simple example? Log in to <a href="https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://jacobvdw.com/app.html">foursquare</a> for crazy map funtimes.
+    Want a simple example? Log in to <a href="https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://jacobvdw.com/app">foursquare</a> for crazy map funtimes.
 
     <div id="map" style="height:270px; width:480px"></div>
   </div>
