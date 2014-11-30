@@ -1,2 +1,4 @@
 *.swp
+server.err
+server.out
 
