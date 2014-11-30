@@ -17,7 +17,7 @@ function response_handler(offset) {
 
 function initial_handler(data) {
   var response = data["response"]["checkins"];
-  CHECKINS = new Array(response["count"]);
+  CHECKINS = new Array(response["count"]-1);
 
   $.each(response["items"], function(i, checkin) {
     CHECKINS[i] = checkin;
@@ -32,9 +32,13 @@ function initial_handler(data) {
 }
 
 function process_checkins() {
+  if (CHECKINS == null) {
+    setTimeout(process_checkins, 100);
+    return;
+  }
   for (var i = 0; i < CHECKINS.length; i++) {
     if (CHECKINS[i] === undefined) {
-      setTimeout(process_checkins(), 100);
+      setTimeout(process_checkins, 100);
       return;
     }
   }
@@ -63,7 +67,7 @@ function process_checkins() {
 
       prevVenueId = pointId;
       prevPoint = point;
-      continue;
+      return;
     }
 
     var edgeId = prevVenueId + "" + pointId;
@@ -71,7 +75,7 @@ function process_checkins() {
       edges[edgeId]["attributes"]["count"]++;
       prevVenueId = pointId;
       prevPoint = point;
-      continue;
+      return;
     }
 
     var edge = new OpenLayers.Geometry.LineString([prevPoint, point]);
@@ -79,16 +83,12 @@ function process_checkins() {
     edges[edgeId]["attributes"] = new Object();
     edges[edgeId]["attributes"]["count"] = 1;
 
-    if (venues[pointId] != undefined) {
+    if (venues[pointId] !== undefined) {
         venues[pointId]["attributes"]["count"]++;
     } else {
       venues[pointId] = new OpenLayers.Feature.Vector(point);
       venues[pointId]["attributes"] = new Object();
       venues[pointId]["attributes"]["count"] = 1;
-    }
-
-    if (lastCheckin == null) {
-      lastCheckin = point;
     }
 
     prevPoint = point;
@@ -190,4 +190,6 @@ var center = new OpenLayers.LonLat(-79.94297997867707, 40.4455930477455)
                            .transform(new OpenLayers.Projection("EPSG:4326"),
                                       map.projection);
 map.setCenter(center, 6);
+
+process_checkins();
 
