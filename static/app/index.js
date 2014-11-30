@@ -1,17 +1,50 @@
-function jsonHandler(data) {
+function make_request(offset, handler) { 
+  var limit = 250;
+  var url = "https://api.foursquare.com/v2/users/self/checkins";
+  var version = "20141130";
+  var token = window.location.href.split('=')[1];
+
+  $.getJSON(url + "?oauth_token="+token + "&limit="+limit + "&offset="+offset + "&v="+version, handler);
+}
+
+function response_handler(offset) {
+  return function(data) {
+    $.each(data["response"]["checkins"]["items"], function(i, checkin) {
+      CHECKINS[offset+i] = checkin;
+    });
+  };
+}
+
+function initial_handler(data) {
+  var response = data["response"]["checkins"];
+  CHECKINS = new Array(response["count"]);
+
+  $.each(response["items"], function(i, checkin) {
+    CHECKINS[i] = checkin;
+  });
+
+  if (response["count"] > 250) {
+    for (var i = 1; i < response["count"]/250; i++) {
+      var offset = 250*i;
+      make_request(offset, response_handler(offset));
+    }
+  }
+}
+
+function process_checkins() {
+  for (var i = 0; i < CHECKINS.length; i++) {
+    if (CHECKINS[i] === undefined) {
+      setTimeout(process_checkins(), 100);
+      return;
+    }
+  }
+
   var edges = new Object();
   var venues = new Object();
   var prevVenueId = null;
   var prevPoint = null;
 
-  for(var i = 0; i < data["response"]["checkins"]["count"]; i++) {
-    var checkin = data["response"]["checkins"]["items"][i];
-    if (checkin == undefined || checkin["venue"] == undefined) {
-      prevVenueId = null;
-      prevPoint = null;
-      continue;
-    }
-
+  $.each(CHECKINS, function(i, checkin) {
     var lonlat = new OpenLayers.LonLat(checkin["venue"]["location"]["lng"],
                                        checkin["venue"]["location"]["lat"])
                  .transform(new OpenLayers.Projection("EPSG:4326"),
@@ -60,7 +93,7 @@ function jsonHandler(data) {
 
     prevPoint = point;
     prevVenueId = pointId;
-  }
+  });
 
   var edgeMax = 0;
   var venueMax = 0;
@@ -119,6 +152,8 @@ function getZoom(feat) {
   return Math.round((zoom * zoom * zoom)/(max * max * max));
 }
 
+var CHECKINS = null;
+
 var map = new OpenLayers.Map("map");
 map.projection = new OpenLayers.Projection("EPSG:3857");
 
@@ -140,29 +175,19 @@ var style = new OpenLayers.Style(
 style = OpenLayers.Util.applyDefaults(style, OpenLayers.Feature.Vector.style["default"]);
 var styleMap = new OpenLayers.StyleMap({"default": style});
 var vectors = new OpenLayers.Layer.Vector("vectors", {"styleMap": styleMap});
-var lastCheckin = null;
 
-var limit = 10000;
-var url = "https://api.foursquare.com/v2/users/self/checkins";
-var date = new Date(Date.now());
-var year = date.getFullYear().toString();
-var month = date.getMonth() + 1;
-var day = date.getDate();
-var version = year + month + day;
 var token = window.location.href.split('=')[1];
-
 if (token == undefined) {
   document.write("Log in to <a href='https://foursquare.com/oauth2/authenticate?client_id=bw4gcp2zccek00xof4y5ghnhizbps5dx5fnjuvlcqunjyrie&response_type=token&redirect_uri=http://jacobvdw.com/app'>foursquare</a> for crazy map funtimes.");
 } else {
-  $.getJSON(url + "?oauth_token="+token + "&limit="+limit + "&v="+version, jsonHandler);
+  make_request(0, initial_handler);
 }
 
 var layer = new OpenLayers.Layer.OSM();
 map.addLayer(layer);
 map.addLayer(vectors);
-if (lastCheckin == null)
-  lastCheckin = new OpenLayers.LonLat(-79.94297997867707, 40.4455930477455)
-                              .transform(new OpenLayers.Projection("EPSG:4326"),
-                                         map.projection);
-map.setCenter(lastCheckin, 6);
+var center = new OpenLayers.LonLat(-79.94297997867707, 40.4455930477455)
+                           .transform(new OpenLayers.Projection("EPSG:4326"),
+                                      map.projection);
+map.setCenter(center, 6);
 
