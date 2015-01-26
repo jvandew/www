@@ -30,7 +30,7 @@ class PlexHandler(RequestHandler):
   def get(self):
     hostname = self.request.host
     colon = self.request.host.rfind(':')
-    if colon is -1:
+    if colon is not -1:
       hostname = self.request.host[0:colon]
     target = 'http://{0}:{1}/web/index.html'.format(hostname, self.plex_port)
     try:
