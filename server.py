@@ -24,21 +24,6 @@ class MainHandler(RequestHandler):
       self.send_error(404)
 
 
-class PlexHandler(RequestHandler):
-  plex_port = 20343
-
-  def get(self):
-    hostname = self.request.host
-    colon = self.request.host.rfind(':')
-    if colon is not -1:
-      hostname = self.request.host[0:colon]
-    target = 'http://{0}:{1}/web/index.html'.format(hostname, self.plex_port)
-    try:
-      self.redirect(target, permanent=True)
-    except Exception:
-      self.send_error(400)
-
-
 def main():
 
   options.define('port', default=8888, help='listen port', type=int)
@@ -49,7 +34,6 @@ def main():
   opts = options.options
 
   handlers = [
-    (r'/plex/?', PlexHandler),
     (r'/(?P<directory>.*)/?', IndexHandler),
     (r'/(?P<template>.*\.html)', MainHandler),
   ]
