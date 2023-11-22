@@ -13,4 +13,4 @@ COPY --from=build-env /usr/local/lib/python3.11/site-packages /usr/lib/python3.1
 COPY --from=build-env /app /app
 WORKDIR /app
 
-CMD ["server.py"]
+CMD ["server.py", "--port=80"]
