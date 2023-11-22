@@ -1,17 +1,16 @@
+import asyncio
 from os import path
 
 from tornado import options
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler
 
 
 class IndexHandler(RequestHandler):
     def get(self, directory: str) -> None:
-      try:
-          self.render(path.join(directory, "index.html"))
-      except IOError:
-          self.send_error(404)
+        try:
+            self.render(path.join(directory, "index.html"))
+        except IOError:
+            self.send_error(404)
 
 
 class MainHandler(RequestHandler):
@@ -32,7 +31,7 @@ def parse_options() -> int:
     return options.options
 
 
-def main() -> None:
+async def main() -> None:
     opts = parse_options()
 
     app = Application(
@@ -44,12 +43,11 @@ def main() -> None:
         static_path=opts.static_path,
         template_path=opts.template_path,
     )
-    server = HTTPServer(app)
 
-    server.listen(opts.port)
-    IOLoop.instance().start()
+    print(f"Running server on port: {opts.port}")
+    app.listen(opts.port)
+    await asyncio.Event().wait()
 
 
 if __name__ == "__main__":
-    main()
-
+    asyncio.run(main())
