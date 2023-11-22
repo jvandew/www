@@ -5,7 +5,7 @@ set -eo pipefail
 readonly IMAGE_TAG="www:$(date '+%Y%m%d')-$(git rev-parse --short HEAD)"
 
 echo "Building image ${IMAGE_TAG}..."
-docker build -t "${IMAGE_TAG}" .
+docker build --platform=linux/amd64 -t "${IMAGE_TAG}" .
 echo "Successfully built and tagged ${IMAGE_TAG}"
 
 if [[ $1 == "--upload" ]]; then
