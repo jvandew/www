@@ -16,7 +16,7 @@ preload([
   'static/card/images/general-light.png',
 ]);
 
-$(window).load(function() {
+$(window).on('load', function() {
 
   $('#start').addClass('active');
 
