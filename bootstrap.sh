@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-virtualenv .env
+virtualenv -p "$(which python3)" .env
 source .env/bin/activate
 
 pip install -r requirements.txt --isolated --only-binary=:all:
