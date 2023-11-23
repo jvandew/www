@@ -1,2 +1,3 @@
+certbot==2.7.4
+certbot-nginx==2.7.4
 tornado==6.3.3
-

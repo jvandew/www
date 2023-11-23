@@ -1,16 +1,15 @@
 FROM python:3.11.6-slim AS build-env
 
 WORKDIR /app
-COPY static/ static/
+
+RUN apt-get update && apt-get install -y nginx
+
+COPY requirements.txt.freeze .
+RUN pip install -r requirements.txt.freeze --isolated --only-binary=:all:
+
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY server.py .
 COPY templates/ templates/
-COPY requirements.txt server.py .
-RUN pip install -r requirements.txt --isolated --only-binary=:all:
+COPY static/ static/
 
-
-FROM gcr.io/distroless/python3-debian12:debug
-
-COPY --from=build-env /usr/local/lib/python3.11/site-packages /usr/lib/python3.11/
-COPY --from=build-env /app /app
-WORKDIR /app
-
-CMD ["server.py", "--port=80"]
+CMD ["server.py"]
