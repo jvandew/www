@@ -144,8 +144,18 @@ async def main() -> None:
     )
 
     print(f"Running tornado server on port: {opts.port}")
-    app.listen(opts.port)
-    await asyncio.Event().wait()
+    server = app.listen(opts.port)
+
+    try:
+        await asyncio.Event().wait()
+
+    except asyncio.CancelledError:
+        print("Cancellation received, shutting down...")
+
+    finally:
+        _renew_task.cancel()
+        server.stop()
+        await server.close_all_connections()
 
 
 if __name__ == "__main__":

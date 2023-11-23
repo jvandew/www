@@ -12,4 +12,4 @@ COPY server.py .
 COPY templates/ templates/
 COPY static/ static/
 
-CMD ["python", "server.py", "--certbot"]
+CMD ["python", "server.py"]
