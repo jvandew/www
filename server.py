@@ -1,6 +1,7 @@
 import asyncio
 from os import path
 import sys
+from typing import Optional
 
 from certbot.main import main as certbot_main
 from tornado.options import OptionParser
@@ -24,40 +25,44 @@ class MainHandler(RequestHandler):
 
 
 def bootstrap_ssl_certs(debug: bool = False) -> None:
+    certbot_args = [
+        "--non-interactive",
+        "--agree-tos",
+        "--email",
+        "vandeweertj@gmail.com",
+        "-d",
+        "jacobvandeweert.com",
+        "-d",
+        "www.jacobvandeweert.com",
+        "-d",
+        "jacobvandeweert.net",
+        "-d",
+        "www.jacobvandeweert.net",
+        "-d",
+        "jacobvdw.com",
+        "-d",
+        "www.jacobvdw.com",
+        "-d",
+        "jacobvdw.net",
+        "-d",
+        "www.jacobvdw.net",
+        "-d",
+        "jvandew.com",
+        "-d",
+        "www.jvandew.com",
+        "-d",
+        "jvandew.net",
+        "-d",
+        "www.jvandew.net",
+        "--nginx",
+    ]
+
+    if debug:
+        certbot_args.append("--test-cert")
+
     try:
-        status = certbot_main(
-            [
-                "--non-interactive",
-                "--agree-tos",
-                "--email",
-                "vandeweertj@gmail.com",
-                "-d",
-                "jacobvandeweert.com",
-                "-d",
-                "www.jacobvandeweert.com",
-                "-d",
-                "jacobvandeweert.net",
-                "-d",
-                "www.jacobvandeweert.net",
-                "-d",
-                "jacobvdw.com",
-                "-d",
-                "www.jacobvdw.com",
-                "-d",
-                "jacobvdw.net",
-                "-d",
-                "www.jacobvdw.net",
-                "-d",
-                "jvandew.com",
-                "-d",
-                "www.jvandew.com",
-                "-d",
-                "jvandew.net",
-                "-d",
-                "www.jvandew.net",
-                "--nginx",
-            ]
-        )
+        print("Invoking certbot to generate new SSL certificates...")
+        status = certbot_main(certbot_args)
 
         if status:
             print(status)
@@ -71,6 +76,36 @@ def bootstrap_ssl_certs(debug: bool = False) -> None:
     except SystemExit:
         print("ERROR: Certbot did not run successfully, shutting down...")
         raise
+
+
+# NOTE(jacob): This coroutine likely introduces a slow memory leak due to certbot setting
+#   a new sys.excepthook on every invocation and those all being cached. I'm not sure
+#   this will ever be an issue in practice, but worth flagging at least. See
+#   https://docs.python.org/3/library/sys.html#sys.excepthook for more details.
+_renew_task: Optional[asyncio.Task] = None
+
+
+async def renew_ssl_certs() -> None:
+    await asyncio.sleep(604800)  # https://youtu.be/fC_q9KPczAg
+
+    try:
+        print("Invoking certbot to check renewal for SSL certificates...")
+        status = certbot_main(
+            [
+                "renew",
+                "--non-interactive",
+                "--nginx",
+            ]
+        )
+
+        if status:
+            print(status)
+
+    except SystemExit:
+        print("ERROR: Certbot did not run renewal successfully, ignoring...")
+
+    finally:
+        _renew_task = asyncio.create_task(renew_ssl_certs())
 
 
 def parse_options() -> OptionParser:
@@ -91,7 +126,12 @@ def parse_options() -> OptionParser:
 async def main() -> None:
     opts = parse_options()
 
-    bootstrap_ssl_certs(debug=opts.debug)
+    if opts.certbot:
+        bootstrap_ssl_certs(debug=opts.debug)
+    else:
+        print("--certbot was not specified, skipping SSL certificate generation.")
+
+    _renew_task = asyncio.create_task(renew_ssl_certs())
 
     app = Application(
         handlers=[
@@ -103,7 +143,7 @@ async def main() -> None:
         template_path=opts.template_path,
     )
 
-    print(f"Running server on port: {opts.port}")
+    print(f"Running tornado server on port: {opts.port}")
     app.listen(opts.port)
     await asyncio.Event().wait()
 
